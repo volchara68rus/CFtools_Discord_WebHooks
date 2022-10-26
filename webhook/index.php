@@ -1,7 +1,6 @@
 <?php
 require "config/config.php";
-$payload = trim(file_get_contents("php://input"));
-$payload = preg_replace('/:\s*(\-?\d+(\.\d+)?([e|E][\-|\+]\d+)?)/', ': "$1"', $payload);
+$payload = file_get_contents("php://input");
 $webhook = json_decode($payload);
 $event = getHeaders("X-Hephaistos-Event");
 
@@ -35,7 +34,7 @@ if ($event === "verification") {
     if (strcmp($signature, $local_signature) == 0) {
         //variables
         $timestamp      =      date("c", strtotime("now"));
-
+        http_response_code(204);
         switch ($event) {
             case 'user.join':
                 $message_content = '[' . $webhook->player_name . '](https://app.cftools.cloud/profile/' . $webhook->cftools_id . ') :flag_' . strtolower($webhook->player_country_code) . ': заходит на сервер. :relieved:';
